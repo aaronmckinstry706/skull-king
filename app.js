@@ -119,9 +119,13 @@ function renderAllRounds() {
     const nextBtn = document.createElement("button");
     nextBtn.textContent = "Next Round";
     nextBtn.onclick = () => {
-      addRound();
+      const isLast = roundIndex === gameState.rounds.length - 1;
+      if (isLast) {
+        addRound(); // adds one more
+      }
+    
       uiState.expandedRounds.clear();
-      uiState.expandedRounds.add(gameState.rounds.length - 1);
+      uiState.expandedRounds.add(roundIndex + 1);
       renderAllRounds();
     };
 
