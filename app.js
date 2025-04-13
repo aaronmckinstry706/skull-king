@@ -66,6 +66,9 @@ function renderAllRounds() {
     const header = document.createElement("div");
     header.className = "accordion-header";
 
+    const ignoreWrapper = document.createElement("span");
+    ignoreWrapper.className = "ignore-checkbox";
+    
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = round.ignored;
@@ -73,9 +76,12 @@ function renderAllRounds() {
       round.ignored = checkbox.checked;
       updateCumulativeScores();
     };
-
+    
     const title = document.createElement("span");
     title.textContent = `Round ${roundIndex + 1}`;
+
+    ignoreWrapper.appendChild(checkbox);
+    header.append(ignoreWrapper, title);
 
     header.append(checkbox, title);
     header.onclick = (e) => {
