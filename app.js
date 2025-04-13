@@ -62,7 +62,6 @@ function renderAllRounds() {
   gameState.rounds.forEach((round, roundIndex) => {
     const section = document.createElement("section");
     section.className = "accordion";
-    if (uiState.expandedRounds.has(roundIndex)) section.classList.add("open");
 
     const header = document.createElement("div");
     header.className = "accordion-header";
@@ -90,6 +89,7 @@ function renderAllRounds() {
 
     const body = document.createElement("div");
     body.className = "accordion-body";
+    if (uiState.expandedRounds.has(roundIndex)) body.classList.add("open");
 
     round.scores.forEach((score, playerIndex) => {
       const row = document.createElement("div");
