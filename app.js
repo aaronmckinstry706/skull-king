@@ -127,7 +127,8 @@ function renderAllRounds() {
     });
 
     const totalRow = document.createElement("div");
-    totalRow.textContent = `Cumulative scores: ${getTotals().join(" / ")}`;
+    const totals = getCumulativeTotals(roundIndex);
+    totalRow.textContent = `Cumulative scores: ${totals.join(" / ")}`;
     body.appendChild(totalRow);
 
     const nextBtn = document.createElement("button");
@@ -153,12 +154,14 @@ function updateCumulativeScores() {
   renderAllRounds();
 }
 
-function getTotals() {
+function getCumulativeTotals(upToRoundIndex) {
   const totals = Array(gameState.players.length).fill(0);
-  gameState.rounds.forEach(round => {
-    if (round.ignored) return;
-    round.scores.forEach((s, i) => totals[i] += s);
-  });
+  for (let r = 0; r <= upToRoundIndex; r++) {
+    const round = gameState.rounds[r];
+    if (!round.ignored) {
+      round.scores.forEach((score, i) => totals[i] += score);
+    }
+  }
   return totals;
 }
 
