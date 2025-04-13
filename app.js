@@ -83,7 +83,6 @@ function renderAllRounds() {
     ignoreWrapper.appendChild(checkbox);
     header.append(ignoreWrapper, title);
 
-    header.append(checkbox, title);
     header.onclick = (e) => {
       // Prevent toggle if clicking on the checkbox or its label/area
       if (e.target.tagName === "INPUT" || e.target.closest(".ignore-checkbox")) {
