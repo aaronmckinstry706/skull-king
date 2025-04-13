@@ -79,6 +79,10 @@ function renderAllRounds() {
 
     header.append(checkbox, title);
     header.onclick = () => {
+      // Prevent toggle if clicking on the checkbox or its label/area
+      if (e.target.tagName === "INPUT" || e.target.closest(".ignore-checkbox")) {
+        return;
+      }
       if (uiState.expandedRounds.has(roundIndex)) {
         uiState.expandedRounds.delete(roundIndex);
       } else {
