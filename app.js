@@ -94,6 +94,11 @@ function renderAllRounds() {
         uiState.expandedRounds.add(roundIndex);
       }
       renderAllRounds();
+
+      setTimeout(() => {
+        const target = document.querySelector(`[data-round-index="${roundIndex + 1}"]`);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 0);
     };
 
     const body = document.createElement("div");
