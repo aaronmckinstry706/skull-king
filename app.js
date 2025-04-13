@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         render: function() {
             // Initial rendering logic here
-            document.body.innerHTML = '<h1>Welcome to Skull King!</h1>';
         }
     };
 
