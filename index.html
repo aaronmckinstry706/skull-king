@@ -8,9 +8,39 @@
     <title>Skull King</title>
 </head>
 <body>
-    <header>
-        <h1>Skull King Scorekeeper</h1>
-    </header>
+<header>
+  <h1>Skull King</h1>
+  <h2>Scorekeeper</h2>
+</header>
+
+<main>
+  <section class="score-table">
+    <div class="table-header">
+      <span>Player</span>
+      <span>Round</span>
+      <span>Score</span>
+    </div>
+
+    <!-- Example player rows -->
+    <div class="score-row">
+      <span class="player-name">Player 1</span>
+      <input type="number" class="round-input" placeholder="0" />
+      <span class="total-score">0</span>
+    </div>
+    <div class="score-row">
+      <span class="player-name">Player 2</span>
+      <input type="number" class="round-input" placeholder="0" />
+      <span class="total-score">0</span>
+    </div>
+    <div class="score-row">
+      <span class="player-name">Player 3</span>
+      <input type="number" class="round-input" placeholder="0" />
+      <span class="total-score">0</span>
+    </div>
+  </section>
+
+  <button class="next-round">Next Round</button>
+</main>
     <script src="app.js"></script>
 </body>
 </html>
