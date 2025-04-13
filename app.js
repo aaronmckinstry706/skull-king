@@ -13,8 +13,9 @@ function renderPlayerEditor() {
   const container = document.getElementById("player-list");
   container.innerHTML = "";
 
+  const header = document.getElementById("player-header");
   header.onclick = () => {
-    section.classList.toggle("open");
+    container.classList.toggle("open");
   };
 
   gameState.players.forEach((name, i) => {
