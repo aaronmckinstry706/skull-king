@@ -13,6 +13,10 @@ function renderPlayerEditor() {
   const container = document.getElementById("player-list");
   container.innerHTML = "";
 
+  header.onclick = () => {
+    section.classList.toggle("open");
+  };
+
   gameState.players.forEach((name, i) => {
     const row = document.createElement("div");
     row.className = "player-row";
