@@ -1,7 +1,7 @@
 {
   "name": "Skull King",
   "short_name": "SkullKing",
-  "start_url": "/index.html",
+  "start_url": "/skull-king/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
