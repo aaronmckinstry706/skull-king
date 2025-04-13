@@ -139,8 +139,14 @@ function renderAllRounds() {
       renderAllRounds();
 
       setTimeout(() => {
-        const target = document.querySelector(`[data-round-index="${roundIndex + 1}"]`);
-        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        const target = document.querySelector(`[data-round-index="${roundIndex + 1}"] .accordion-header`);
+        if (target) {
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: "start",     // aligns the top of the element to the top of the scroll area
+            inline: "nearest"
+          });
+        }
       }, 0);
     };
 
