@@ -153,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
         init: function() {
             this.bindEvents();
             this.render();
-            init();
         },
         bindEvents: function() {
         },
