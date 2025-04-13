@@ -1,4 +1,5 @@
 // Main JavaScript logic for the Skull King PWA
+// Adding comment to force deployment
 document.addEventListener('DOMContentLoaded', () => {
     const app = {
         init: function() {
