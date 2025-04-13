@@ -160,6 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
             this.render();
         },
         bindEvents: function() {
+          document.getElementById("add-round-btn").addEventListener("click", () => {
+            addRound();
+            uiState.expandedRounds.clear();
+            uiState.expandedRounds.add(gameState.rounds.length - 1); // open new one
+            renderAllRounds();
+          });
         },
         render: function() {
             renderPlayerEditor();
