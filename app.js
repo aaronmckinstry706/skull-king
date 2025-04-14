@@ -101,24 +101,38 @@ function renderAllRounds() {
     body.className = "accordion-body";
     if (uiState.expandedRounds.has(roundIndex)) body.classList.add("open");
 
-    round.scores.forEach((score, playerIndex) => {
+    round.players.forEach((playerData, playerIndex) => {
       const row = document.createElement("div");
       row.className = "score-row";
-
-      const label = document.createElement("span");
-      label.textContent = gameState.players[playerIndex];
-
-      const input = document.createElement("input");
-      input.type = "number";
-      input.value = score;
-      input.dataset.roundIndex = roundIndex;
-      input.dataset.playerIndex = playerIndex;
-      input.oninput = () => {
-        round.scores[playerIndex] = parseInt(input.value || "0");
-        updateCumulativeScores();
+    
+      const name = document.createElement("span");
+      name.textContent = gameState.players[playerIndex];
+    
+      const bidInput = document.createElement("input");
+      bidInput.type = "number";
+      bidInput.value = playerData.bid;
+      bidInput.oninput = () => {
+        playerData.bid = parseInt(bidInput.value || "0");
+        renderAllRounds(); // to recalc scores
       };
-
-      row.append(label, input);
+    
+      const actualInput = document.createElement("input");
+      actualInput.type = "number";
+      actualInput.value = playerData.actual;
+      actualInput.oninput = () => {
+        playerData.actual = parseInt(actualInput.value || "0");
+        renderAllRounds();
+      };
+    
+      const scoreSpan = document.createElement("span");
+      const score = computeScore(playerData.bid, playerData.actual);
+      scoreSpan.textContent = score;
+    
+      const cumulativeSpan = document.createElement("span");
+      const cumulative = getCumulativeScore(playerIndex, roundIndex);
+      cumulativeSpan.textContent = cumulative;
+    
+      row.append(name, bidInput, actualInput, scoreSpan, cumulativeSpan);
       body.appendChild(row);
     });
 
@@ -161,20 +175,26 @@ function updateCumulativeScores() {
   renderAllRounds();
 }
 
-function getCumulativeTotals(upToRoundIndex) {
-  const totals = Array(gameState.players.length).fill(0);
-  for (let r = 0; r <= upToRoundIndex; r++) {
-    const round = gameState.rounds[r];
-    if (!round.ignored) {
-      round.scores.forEach((score, i) => totals[i] += score);
-    }
+function getCumulativeScore(playerIndex, upToIndex) {
+  let total = 0;
+  for (let i = 0; i <= upToIndex; i++) {
+    const r = gameState.rounds[i];
+    if (r.ignored) continue;
+    const p = r.players[playerIndex];
+    total += computeScore(p.bid, p.actual);
   }
-  return totals;
+  return total;
 }
 
 function addRound() {
-  const scores = Array(gameState.players.length).fill(0);
-  gameState.rounds.push({ scores, ignored: false });
+  gameState.rounds.push({
+    ignored: false,
+    players: gameState.players.map(() => ({ bid: 0, actual: 0 }))
+  });
+}
+
+function computeScore(bid, actual) {
+  return bid === actual ? 20 + 10 * bid : -10 * Math.abs(bid - actual);
 }
 
 function updateRoundPlayerNames() {
