@@ -136,7 +136,7 @@ function renderAllRounds() {
       };
     
       const scoreSpan = document.createElement("span");
-      const score = computeScore(playerData.bid, playerData.actual, roundIndex);
+      const score = computeScore(playerData, roundIndex);
       scoreSpan.textContent = score;
     
       const cumulativeSpan = document.createElement("span");
@@ -145,6 +145,45 @@ function renderAllRounds() {
     
       row.append(name, bidInput, actualInput, scoreSpan, cumulativeSpan);
       body.appendChild(row);
+
+      const bonusRow = document.createElement("div");
+      bonusRow.className = "bonus-row";
+      
+      // Bonus buttons config
+      const bonuses = [
+        { key: "mermaid", label: "🧜", value: 20 },
+        { key: "pirate", label: "⚔️", value: 30 },
+        { key: "skullking", label: "☠️", value: 40 },
+        { key: "nonTrump14", label: "🔸14", value: 10 },
+        { key: "trump14", label: "🏴‍☠️14", value: 20 },
+      ];
+      
+      bonuses.forEach(({ key, label }) => {
+        const container = document.createElement("div");
+        container.className = "bonus-counter";
+      
+        const dec = document.createElement("button");
+        dec.textContent = "−";
+        dec.onclick = () => {
+          playerData.bonuses[key] = Math.max(0, (playerData.bonuses[key] || 0) - 1);
+          renderAllRounds();
+        };
+      
+        const count = document.createElement("span");
+        count.textContent = `${label} ${playerData.bonuses[key] || 0}`;
+      
+        const inc = document.createElement("button");
+        inc.textContent = "+";
+        inc.onclick = () => {
+          playerData.bonuses[key] = (playerData.bonuses[key] || 0) + 1;
+          renderAllRounds();
+        };
+      
+        container.append(dec, count, inc);
+        bonusRow.appendChild(container);
+      });
+      
+      body.appendChild(bonusRow);
     });
 
     const nextBtn = document.createElement("button");
@@ -187,7 +226,7 @@ function getCumulativeScore(playerIndex, upToIndex) {
     const r = gameState.rounds[i];
     if (r.ignored) continue;
     const p = r.players[playerIndex];
-    total += computeScore(p.bid, p.actual, i);
+    total += computeScore(p, i);
   }
   return total;
 }
@@ -195,15 +234,34 @@ function getCumulativeScore(playerIndex, upToIndex) {
 function addRound() {
   gameState.rounds.push({
     ignored: false,
-    players: gameState.players.map(() => ({ bid: 0, actual: 0 }))
+    players: gameState.players.map(() => ({
+      bid: 0,
+      actual: 0,
+      bonuses: {
+        mermaid: 0,
+        pirate: 0,
+        skullking: 0,
+        nonTrump14: 0,
+        trump14: 0
+      }
+    }))
   });
 }
 
-function computeScore(bid, actual, roundIndex) {
+function computeScore(player, roundIndex) {
+  const { bid, actual, bonuses } = player;
+  let base = 0;
   if (bid === 0)
-    return (bid === actual ? 1 : -1)*(roundIndex + 1)*10;
+    base = (bid === actual ? 1 : -1)*(roundIndex + 1)*10;
   else
-    return bid === actual ? 20 * bid : -10 * Math.abs(bid - actual);
+    base = bid === actual ? 20 * bid : -10 * Math.abs(bid - actual);
+  let bonus =
+    (bonuses?.mermaid ?? 0) * 20 +
+    (bonuses?.pirate ?? 0) * 30 +
+    (bonuses?.skullking ?? 0) * 40 +
+    (bonuses?.nonTrump14 ?? 0) * 10 +
+    (bonuses?.trump14 ?? 0) * 20;
+  return base + bonus;
 }
 
 function updateRoundPlayerNames() {
