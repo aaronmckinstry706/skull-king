@@ -187,7 +187,7 @@ function getCumulativeScore(playerIndex, upToIndex) {
     const r = gameState.rounds[i];
     if (r.ignored) continue;
     const p = r.players[playerIndex];
-    total += computeScore(p.bid, p.actual, upToIndex);
+    total += computeScore(p.bid, p.actual, i);
   }
   return total;
 }
