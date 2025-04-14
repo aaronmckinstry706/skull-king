@@ -186,29 +186,26 @@ function renderAllRounds() {
       body.appendChild(bonusRow);
     });
 
-    const nextBtn = document.createElement("button");
-    nextBtn.textContent = "Next Round";
-    nextBtn.onclick = () => {
-      const isLast = roundIndex === gameState.rounds.length - 1;
-      if (isLast) {
-        addRound(); // adds one more
-      }
-    
-      uiState.expandedRounds.clear();
-      uiState.expandedRounds.add(roundIndex + 1);
-      renderAllRounds();
-
-      setTimeout(() => {
-        const target = document.querySelector(`[data-round-index="${roundIndex + 1}"].accordion-header`);
-        if (target) {
-          target.scrollIntoView({
-            behavior: "smooth",
-            block: "start",     // aligns the top of the element to the top of the scroll area
-            inline: "nearest"
-          });
-        }
-      }, 0);
-    };
+    if (roundIndex < gameState.rounds.length - 1) {
+      const nextBtn = document.createElement("button");
+      nextBtn.textContent = "Next Round";
+      nextBtn.onclick = () => {
+        uiState.expandedRounds.clear();
+        uiState.expandedRounds.add(roundIndex + 1);
+        renderAllRounds();
+  
+        setTimeout(() => {
+          const target = document.querySelector(`[data-round-index="${roundIndex + 1}"].accordion-header`);
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",     // aligns the top of the element to the top of the scroll area
+              inline: "nearest"
+            });
+          }
+        }, 0);
+      };
+    }
 
     body.appendChild(nextBtn);
     section.append(header, body);
