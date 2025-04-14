@@ -205,9 +205,10 @@ function renderAllRounds() {
           }
         }, 0);
       };
+
+      body.appendChild(nextBtn);
     }
 
-    body.appendChild(nextBtn);
     section.append(header, body);
     roundsContainer.appendChild(section);
   });
