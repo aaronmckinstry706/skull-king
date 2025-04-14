@@ -34,7 +34,7 @@ function renderPlayerEditor() {
     remove.textContent = "−";
     remove.onclick = () => {
       gameState.players.splice(i, 1);
-      gameState.rounds.forEach(r => r.scores.splice(i, 1));
+      gameState.rounds.forEach(r => r.players.splice(i, 1));
       renderPlayerEditor();
       renderAllRounds();
     };
@@ -47,7 +47,7 @@ function renderPlayerEditor() {
   addBtn.textContent = "Add Player";
   addBtn.onclick = () => {
     gameState.players.push(`Player ${gameState.players.length + 1}`);
-    gameState.rounds.forEach(r => r.scores.push(0));
+    gameState.rounds.forEach(r => r.players.push({bid: 0, actual: 0}));
     renderPlayerEditor();
     renderAllRounds();
   };
@@ -135,11 +135,6 @@ function renderAllRounds() {
       row.append(name, bidInput, actualInput, scoreSpan, cumulativeSpan);
       body.appendChild(row);
     });
-
-    const totalRow = document.createElement("div");
-    const totals = getCumulativeTotals(roundIndex);
-    totalRow.textContent = `Cumulative scores: ${totals.join(" / ")}`;
-    body.appendChild(totalRow);
 
     const nextBtn = document.createElement("button");
     nextBtn.textContent = "Next Round";
