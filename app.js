@@ -72,9 +72,9 @@ function renderAllRounds() {
     
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.checked = round.ignored;
+    checkbox.checked = !round.ignored;
     checkbox.onchange = () => {
-      round.ignored = checkbox.checked;
+      round.ignored = !checkbox.checked;
       updateCumulativeScores();
     };
     
