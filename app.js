@@ -278,7 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         render: function() {
             renderPlayerEditor();
-            addRound(); // Initial round
+            for (let i = 0; i < 10; ++i)
+                addRound();
             renderAllRounds();
         }
     };
