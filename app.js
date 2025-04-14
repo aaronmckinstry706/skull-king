@@ -140,7 +140,7 @@ function renderAllRounds() {
       renderAllRounds();
 
       setTimeout(() => {
-        const target = document.querySelector(`[data-round-index="${roundIndex + 1}"] .accordion-header`);
+        const target = document.querySelector(`[data-round-index="${roundIndex + 1}"].accordion-header`);
         if (target) {
           target.scrollIntoView({
             behavior: "smooth",
