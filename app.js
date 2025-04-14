@@ -284,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         render: function() {
             renderPlayerEditor();
+            addRound(); // Initial round
             renderAllRounds();
         }
     };
