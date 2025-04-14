@@ -105,19 +105,6 @@ button {
   margin-top: 0.5rem;
 }
 
-#add-round-btn {
-  display: block;
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.75rem;
-  font-size: 1rem;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-}
-
 .score-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
