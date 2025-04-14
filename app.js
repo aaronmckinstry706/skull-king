@@ -65,6 +65,7 @@ function renderAllRounds() {
 
     const header = document.createElement("div");
     header.className = "accordion-header";
+    header.dataset.roundIndex = roundIndex;
 
     const ignoreWrapper = document.createElement("span");
     ignoreWrapper.className = "ignore-checkbox";
