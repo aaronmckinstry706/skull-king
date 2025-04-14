@@ -1,3 +1,25 @@
+.bonus-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 1rem;
+  justify-content: flex-start;
+}
+
+.bonus-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #f0f0f0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
+.bonus-counter button {
+  font-size: 1rem;
+  padding: 0.2rem 0.5rem;
+}
+
 .score-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
