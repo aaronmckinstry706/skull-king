@@ -136,7 +136,7 @@ function renderAllRounds() {
       };
     
       const scoreSpan = document.createElement("span");
-      const score = computeScore(playerData.bid, playerData.actual);
+      const score = computeScore(playerData.bid, playerData.actual, roundIndex);
       scoreSpan.textContent = score;
     
       const cumulativeSpan = document.createElement("span");
@@ -187,7 +187,7 @@ function getCumulativeScore(playerIndex, upToIndex) {
     const r = gameState.rounds[i];
     if (r.ignored) continue;
     const p = r.players[playerIndex];
-    total += computeScore(p.bid, p.actual);
+    total += computeScore(p.bid, p.actual, upToIndex);
   }
   return total;
 }
@@ -199,8 +199,11 @@ function addRound() {
   });
 }
 
-function computeScore(bid, actual) {
-  return bid === actual ? 20 + 10 * bid : -10 * Math.abs(bid - actual);
+function computeScore(bid, actual, roundIndex) {
+  if (bid === 0)
+    return (bid === actual ? 1 : -1)*(roundIndex + 1)*10;
+  else
+    return bid === actual ? 20 * bid : -10 * Math.abs(bid - actual);
 }
 
 function updateRoundPlayerNames() {
