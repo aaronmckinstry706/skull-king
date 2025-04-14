@@ -101,6 +101,17 @@ function renderAllRounds() {
     body.className = "accordion-body";
     if (uiState.expandedRounds.has(roundIndex)) body.classList.add("open");
 
+    const headerRow = document.createElement("div");
+    headerRow.className = "score-row score-header";
+    
+    ["Player", "Bid", "Actual", "Score", "Cumulative"].forEach(text => {
+      const span = document.createElement("span");
+      span.textContent = text;
+      headerRow.appendChild(span);
+    });
+    
+    body.appendChild(headerRow);
+    
     round.players.forEach((playerData, playerIndex) => {
       const row = document.createElement("div");
       row.className = "score-row";
