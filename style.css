@@ -72,6 +72,22 @@ h1 {
   background: #ddd;
   font-weight: bold;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.accordion-header .round-title {
+  display: inline-block;
+  width: 6rem;
+}
+
+.accordion-header .ignore-checkbox {
+  margin-left: 1rem;
+}
+
+.accordion-header .ignore-checkbox input {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .accordion-body {

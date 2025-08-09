@@ -81,9 +81,13 @@ function renderAllRounds() {
     header.className = "accordion-header";
     header.dataset.roundIndex = roundIndex;
 
+    const title = document.createElement("span");
+    title.textContent = `Round ${roundIndex + 1}`;
+    title.className = "round-title";
+
     const ignoreWrapper = document.createElement("span");
     ignoreWrapper.className = "ignore-checkbox";
-    
+
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = !round.ignored;
@@ -91,12 +95,9 @@ function renderAllRounds() {
       round.ignored = !checkbox.checked;
       updateCumulativeScores();
     };
-    
-    const title = document.createElement("span");
-    title.textContent = `Round ${roundIndex + 1}`;
 
     ignoreWrapper.appendChild(checkbox);
-    header.append(ignoreWrapper, title);
+    header.append(title, ignoreWrapper);
 
     header.onclick = (e) => {
       // Prevent toggle if clicking on the checkbox or its label/area
