@@ -185,59 +185,103 @@ function renderAllRounds() {
         { key: "mermaid", label: "🧜", value: 20, max: 2 },
         { key: "pirate", label: "⚔️", value: 30, max: 6 },
         { key: "skullking", label: "☠️", value: 40, max: 1 },
-        { key: "nonTrump14", label: "🔸14", value: 10, max: 3 },
-        { key: "trump14", label: "🏴‍☠️14", value: 20, max: 1 },
+        { key: "nonTrump14", label: "14🔸", value: 10, max: 3 },
+        { key: "trump14", label: "14🏴‍☠️", value: 20, max: 1 },
       ];
 
       bonuses.forEach(({ key, label, max }) => {
         const container = document.createElement("div");
         container.className = "bonus-counter";
+        if (round.ignored) container.classList.add("disabled");
 
-        const emojiBtn = document.createElement("button");
-        emojiBtn.textContent = label;
-        emojiBtn.onclick = () => {
-          const current = playerData.bonuses[key] || 0;
-          playerData.bonuses[key] = (current + 1) % (max + 1);
-          renderAllRounds();
-        };
-        emojiBtn.disabled = round.ignored;
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "label";
+        labelSpan.textContent = label;
 
         const count = document.createElement("span");
         count.textContent = playerData.bonuses[key] || 0;
 
-        container.append(emojiBtn, count);
+        const increment = () => {
+          if (round.ignored) return;
+          const current = playerData.bonuses[key] || 0;
+          playerData.bonuses[key] = (current + 1) % (max + 1);
+          renderAllRounds();
+        };
+
+        container.onclick = increment;
+
+        container.append(labelSpan, count);
         bonusRow.appendChild(container);
       });
-      
+
       body.appendChild(bonusRow);
     });
 
-    // Button to jump to the next non-ignored round
+    // Navigation buttons to jump between non-ignored rounds
+    const prevRoundIndex = (() => {
+      for (let i = roundIndex - 1; i >= 0; i--) {
+        if (!gameState.rounds[i].ignored) return i;
+      }
+      return -1;
+    })();
     const nextRoundIndex = gameState.rounds.findIndex((r, i) => i > roundIndex && !r.ignored);
-    if (nextRoundIndex !== -1) {
-      const nextBtn = document.createElement("button");
-      nextBtn.textContent = "Next Round";
-      nextBtn.onclick = () => {
-        uiState.expandedRounds.clear();
-        uiState.expandedRounds.add(nextRoundIndex);
-        renderAllRounds();
 
-        setTimeout(() => {
-          const target = document.querySelector(
-            `[data-round-index="${nextRoundIndex}"].accordion-header`
-          );
-          if (target) {
-            target.scrollIntoView({
-              behavior: "smooth",
-              block: "start", // aligns the top of the element to the top of the scroll area
-              inline: "nearest"
-            });
-          }
-        }, 0);
-      };
-      nextBtn.disabled = round.ignored;
+    if (prevRoundIndex !== -1 || nextRoundIndex !== -1) {
+      const navContainer = document.createElement("div");
+      navContainer.className = "round-nav";
 
-      body.appendChild(nextBtn);
+      if (prevRoundIndex !== -1) {
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "Previous Round";
+        prevBtn.onclick = () => {
+          uiState.expandedRounds.clear();
+          uiState.expandedRounds.add(prevRoundIndex);
+          renderAllRounds();
+
+          setTimeout(() => {
+            const target = document.querySelector(
+              `[data-round-index="${prevRoundIndex}"].accordion-header`
+            );
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest"
+              });
+            }
+          }, 0);
+        };
+        prevBtn.disabled = round.ignored;
+        navContainer.appendChild(prevBtn);
+      }
+
+      if (nextRoundIndex !== -1) {
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "Next Round";
+        nextBtn.style.marginLeft = "auto";
+        nextBtn.onclick = () => {
+          uiState.expandedRounds.clear();
+          uiState.expandedRounds.add(nextRoundIndex);
+          renderAllRounds();
+
+          setTimeout(() => {
+            const target = document.querySelector(
+              `[data-round-index="${nextRoundIndex}"].accordion-header`
+            );
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start", // aligns the top of the element to the top of the scroll area
+                inline: "nearest"
+              });
+            }
+          }, 0);
+        };
+        nextBtn.disabled = round.ignored;
+        navContainer.appendChild(nextBtn);
+      }
+
+      body.appendChild(navContainer);
     }
 
     section.append(header, body);

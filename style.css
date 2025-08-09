@@ -13,16 +13,16 @@
   background: #f0f0f0;
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
+  cursor: pointer;
 }
 
-.bonus-counter button {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
+.bonus-counter .label {
   font-size: 1.25rem;
-  color: inherit;
-  cursor: pointer;
+}
+
+.bonus-counter.disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .score-row {
@@ -31,6 +31,7 @@
   align-items: center;
   gap: 0.5rem;
   margin: 0.25rem 0;
+  padding-left: 0.25rem;
 }
 
 .score-row input {
@@ -44,6 +45,11 @@
   background: #f0f0f0;
   padding: 0.25rem;
   border-radius: 4px;
+}
+
+.round-nav {
+  display: flex;
+  margin-top: 1rem;
 }
 
 body {
