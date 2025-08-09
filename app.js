@@ -219,20 +219,24 @@ function renderAllRounds() {
       body.appendChild(bonusRow);
     });
 
-    if (roundIndex < gameState.rounds.length - 1) {
+    // Button to jump to the next non-ignored round
+    const nextRoundIndex = gameState.rounds.findIndex((r, i) => i > roundIndex && !r.ignored);
+    if (nextRoundIndex !== -1) {
       const nextBtn = document.createElement("button");
       nextBtn.textContent = "Next Round";
       nextBtn.onclick = () => {
         uiState.expandedRounds.clear();
-        uiState.expandedRounds.add(roundIndex + 1);
+        uiState.expandedRounds.add(nextRoundIndex);
         renderAllRounds();
-  
+
         setTimeout(() => {
-          const target = document.querySelector(`[data-round-index="${roundIndex + 1}"].accordion-header`);
+          const target = document.querySelector(
+            `[data-round-index="${nextRoundIndex}"].accordion-header`
+          );
           if (target) {
             target.scrollIntoView({
               behavior: "smooth",
-              block: "start",     // aligns the top of the element to the top of the scroll area
+              block: "start", // aligns the top of the element to the top of the scroll area
               inline: "nearest"
             });
           }
