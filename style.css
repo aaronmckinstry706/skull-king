@@ -90,6 +90,10 @@ h1 {
   align-items: center;
 }
 
+.player-row button {
+  margin-top: 0;
+}
+
 input[type="text"], input[type="number"] {
   flex: 1;
   padding: 0.3rem;
