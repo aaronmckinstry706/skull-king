@@ -127,6 +127,16 @@ function renderAllRounds() {
     body.appendChild(headerRow);
     
     round.players.forEach((playerData, playerIndex) => {
+      // Ensure bonuses object exists with default values for each player
+      playerData.bonuses = {
+        mermaid: 0,
+        pirate: 0,
+        skullking: 0,
+        nonTrump14: 0,
+        trump14: 0,
+        ...playerData.bonuses
+      };
+
       const row = document.createElement("div");
       row.className = "score-row";
     
