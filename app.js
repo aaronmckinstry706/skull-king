@@ -182,37 +182,30 @@ function renderAllRounds() {
       
       // Bonus buttons config
       const bonuses = [
-        { key: "mermaid", label: "🧜", value: 20 },
-        { key: "pirate", label: "⚔️", value: 30 },
-        { key: "skullking", label: "☠️", value: 40 },
-        { key: "nonTrump14", label: "🔸14", value: 10 },
-        { key: "trump14", label: "🏴‍☠️14", value: 20 },
+        { key: "mermaid", label: "🧜", value: 20, max: 2 },
+        { key: "pirate", label: "⚔️", value: 30, max: 6 },
+        { key: "skullking", label: "☠️", value: 40, max: 1 },
+        { key: "nonTrump14", label: "🔸14", value: 10, max: 3 },
+        { key: "trump14", label: "🏴‍☠️14", value: 20, max: 1 },
       ];
-      
-      bonuses.forEach(({ key, label }) => {
+
+      bonuses.forEach(({ key, label, max }) => {
         const container = document.createElement("div");
         container.className = "bonus-counter";
-      
-        const dec = document.createElement("button");
-        dec.textContent = "−";
-        dec.onclick = () => {
-          playerData.bonuses[key] = Math.max(0, (playerData.bonuses[key] || 0) - 1);
+
+        const emojiBtn = document.createElement("button");
+        emojiBtn.textContent = label;
+        emojiBtn.onclick = () => {
+          const current = playerData.bonuses[key] || 0;
+          playerData.bonuses[key] = (current + 1) % (max + 1);
           renderAllRounds();
         };
-        dec.disabled = round.ignored;
-      
+        emojiBtn.disabled = round.ignored;
+
         const count = document.createElement("span");
-        count.textContent = `${label} ${playerData.bonuses[key] || 0}`;
-      
-        const inc = document.createElement("button");
-        inc.textContent = "+";
-        inc.onclick = () => {
-          playerData.bonuses[key] = (playerData.bonuses[key] || 0) + 1;
-          renderAllRounds();
-        };
-        inc.disabled = round.ignored;
-      
-        container.append(dec, count, inc);
+        count.textContent = playerData.bonuses[key] || 0;
+
+        container.append(emojiBtn, count);
         bonusRow.appendChild(container);
       });
       
