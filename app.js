@@ -76,6 +76,7 @@ function renderAllRounds() {
   gameState.rounds.forEach((round, roundIndex) => {
     const section = document.createElement("section");
     section.className = "accordion";
+    if (round.ignored) section.classList.add("disabled");
 
     const header = document.createElement("div");
     header.className = "accordion-header";
@@ -93,6 +94,9 @@ function renderAllRounds() {
     checkbox.checked = !round.ignored;
     checkbox.onchange = () => {
       round.ignored = !checkbox.checked;
+      if (round.ignored) {
+        uiState.expandedRounds.delete(roundIndex);
+      }
       updateCumulativeScores();
     };
 
@@ -100,8 +104,8 @@ function renderAllRounds() {
     header.append(title, ignoreWrapper);
 
     header.onclick = (e) => {
-      // Prevent toggle if clicking on the checkbox or its label/area
-      if (e.target.tagName === "INPUT" || e.target.closest(".ignore-checkbox")) {
+      // Prevent toggle if clicking on the checkbox, its label/area, or if disabled
+      if (e.target.tagName === "INPUT" || e.target.closest(".ignore-checkbox") || round.ignored) {
         return;
       }
       if (uiState.expandedRounds.has(roundIndex)) {
@@ -114,7 +118,7 @@ function renderAllRounds() {
 
     const body = document.createElement("div");
     body.className = "accordion-body";
-    if (uiState.expandedRounds.has(roundIndex)) body.classList.add("open");
+    if (!round.ignored && uiState.expandedRounds.has(roundIndex)) body.classList.add("open");
 
     const headerRow = document.createElement("div");
     headerRow.className = "score-row score-header";
@@ -151,6 +155,7 @@ function renderAllRounds() {
         playerData.bid = parseInt(bidInput.value || "0");
         renderAllRounds(); // to recalc scores
       };
+      bidInput.disabled = round.ignored;
     
       const actualInput = document.createElement("input");
       actualInput.type = "number";
@@ -159,6 +164,7 @@ function renderAllRounds() {
         playerData.actual = parseInt(actualInput.value || "0");
         renderAllRounds();
       };
+      actualInput.disabled = round.ignored;
     
       const scoreSpan = document.createElement("span");
       const score = computeScore(playerData, roundIndex);
@@ -193,6 +199,7 @@ function renderAllRounds() {
           playerData.bonuses[key] = Math.max(0, (playerData.bonuses[key] || 0) - 1);
           renderAllRounds();
         };
+        dec.disabled = round.ignored;
       
         const count = document.createElement("span");
         count.textContent = `${label} ${playerData.bonuses[key] || 0}`;
@@ -203,6 +210,7 @@ function renderAllRounds() {
           playerData.bonuses[key] = (playerData.bonuses[key] || 0) + 1;
           renderAllRounds();
         };
+        inc.disabled = round.ignored;
       
         container.append(dec, count, inc);
         bonusRow.appendChild(container);
@@ -230,6 +238,7 @@ function renderAllRounds() {
           }
         }, 0);
       };
+      nextBtn.disabled = round.ignored;
 
       body.appendChild(nextBtn);
     }
