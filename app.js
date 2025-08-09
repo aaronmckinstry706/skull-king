@@ -318,12 +318,14 @@ function computeScore(player, roundIndex) {
     base = (bid === actual ? 1 : -1)*(roundIndex + 1)*10;
   else
     base = bid === actual ? 20 * bid : -10 * Math.abs(bid - actual);
-  let bonus =
-    (bonuses?.mermaid ?? 0) * 20 +
-    (bonuses?.pirate ?? 0) * 30 +
-    (bonuses?.skullking ?? 0) * 40 +
-    (bonuses?.nonTrump14 ?? 0) * 10 +
-    (bonuses?.trump14 ?? 0) * 20;
+  let bonus = 0;
+  if (bid === actual)
+    bonus =
+      (bonuses?.mermaid ?? 0) * 20 +
+      (bonuses?.pirate ?? 0) * 30 +
+      (bonuses?.skullking ?? 0) * 40 +
+      (bonuses?.nonTrump14 ?? 0) * 10 +
+      (bonuses?.trump14 ?? 0) * 20;
   return base + bonus;
 }
 
