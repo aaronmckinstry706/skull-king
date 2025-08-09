@@ -127,3 +127,8 @@ button {
   margin-top: 0.5rem;
 }
 
+.accordion.disabled .accordion-header {
+  cursor: default;
+  opacity: 0.5;
+}
+
