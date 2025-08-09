@@ -9,6 +9,20 @@ const uiState = {
   expandedRounds: new Set([-1]) // -1 for player editor
 };
 
+function createPlayer() {
+  return {
+    bid: 0,
+    actual: 0,
+    bonuses: {
+      mermaid: 0,
+      pirate: 0,
+      skullking: 0,
+      nonTrump14: 0,
+      trump14: 0
+    }
+  };
+}
+
 function renderPlayerEditor() {
   const container = document.getElementById("player-list");
   container.innerHTML = "";
@@ -47,7 +61,7 @@ function renderPlayerEditor() {
   addBtn.textContent = "Add Player";
   addBtn.onclick = () => {
     gameState.players.push(`Player ${gameState.players.length + 1}`);
-    gameState.rounds.forEach(r => r.players.push({bid: 0, actual: 0}));
+    gameState.rounds.forEach(r => r.players.push(createPlayer()));
     renderPlayerEditor();
     renderAllRounds();
   };
@@ -232,17 +246,7 @@ function getCumulativeScore(playerIndex, upToIndex) {
 function addRound() {
   gameState.rounds.push({
     ignored: false,
-    players: gameState.players.map(() => ({
-      bid: 0,
-      actual: 0,
-      bonuses: {
-        mermaid: 0,
-        pirate: 0,
-        skullking: 0,
-        nonTrump14: 0,
-        trump14: 0
-      }
-    }))
+    players: gameState.players.map(() => createPlayer())
   });
 }
 
