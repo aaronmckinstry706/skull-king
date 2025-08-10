@@ -101,7 +101,21 @@ function renderPlayerEditor() {
     remove.textContent = "−";
     remove.onclick = () => {
       gameState.players.splice(i, 1);
-      gameState.rounds.forEach(r => r.players.splice(i, 1));
+      gameState.rounds.forEach(r => {
+        // Remove the player from the round
+        r.players.splice(i, 1);
+
+        // Clean up any loot partnerships that referenced this player
+        r.players.forEach(p => {
+          const loot = p.bonuses?.loot;
+          if (!loot) return;
+          // Remove references to the removed player and
+          // adjust indices greater than the removed index
+          p.bonuses.loot = loot
+            .filter(idx => idx !== i)
+            .map(idx => (idx > i ? idx - 1 : idx));
+        });
+      });
       renderPlayerEditor();
       renderAllRounds();
     };
@@ -508,6 +522,7 @@ function computeScore(player, roundIndex) {
   let loot = 0;
   (bonuses?.loot || []).forEach(partnerIndex => {
     const partner = gameState.rounds[roundIndex].players[partnerIndex];
+    if (!partner) return; // skip if partner no longer exists
     const partnerMod = partner.bid + (partner.bonuses?.bidModifier ?? 0);
     const partnerMade = partner.actual === partnerMod;
     if (made && partnerMade) loot += 20;
