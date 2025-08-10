@@ -445,9 +445,8 @@ function showLootDropdown(button, roundIndex, playerIndex) {
   const dropdown = document.createElement("div");
   dropdown.className = "loot-dropdown";
   const round = gameState.rounds[roundIndex];
-  const currentLoot = round.players[playerIndex].bonuses.loot || [];
   gameState.players.forEach((name, idx) => {
-    if (idx === playerIndex || currentLoot.includes(idx)) return;
+    if (idx === playerIndex) return;
     const option = document.createElement("div");
     option.textContent = name;
     option.onclick = () => {
@@ -468,15 +467,19 @@ function addLootPartnership(roundIndex, p1, p2) {
   const round = gameState.rounds[roundIndex];
   const list1 = round.players[p1].bonuses.loot || (round.players[p1].bonuses.loot = []);
   const list2 = round.players[p2].bonuses.loot || (round.players[p2].bonuses.loot = []);
-  if (!list1.includes(p2)) list1.push(p2);
-  if (!list2.includes(p1)) list2.push(p1);
+  list1.push(p2);
+  list2.push(p1);
   renderAllRounds();
 }
 
 function removeLootPartnership(roundIndex, p1, p2) {
   const round = gameState.rounds[roundIndex];
-  round.players[p1].bonuses.loot = (round.players[p1].bonuses.loot || []).filter(i => i !== p2);
-  round.players[p2].bonuses.loot = (round.players[p2].bonuses.loot || []).filter(i => i !== p1);
+  const list1 = round.players[p1].bonuses.loot || [];
+  const list2 = round.players[p2].bonuses.loot || [];
+  const idx1 = list1.indexOf(p2);
+  if (idx1 !== -1) list1.splice(idx1, 1);
+  const idx2 = list2.indexOf(p1);
+  if (idx2 !== -1) list2.splice(idx2, 1);
   renderAllRounds();
 }
 
