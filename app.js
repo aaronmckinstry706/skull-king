@@ -165,13 +165,13 @@ function renderAllRounds() {
     const headerRow = document.createElement("div");
     headerRow.className = "score-row score-header";
 
-    ["Player", "Bid", "Take", "Score", "Cumulative"].forEach(text => {
+    ["Player", "Bid", "Take", "Score", "Total"].forEach(text => {
       const span = document.createElement("span");
       span.textContent = text;
       if (text === "Bid") span.classList.add("bid");
       if (text === "Take") span.classList.add("take");
       if (text === "Score") span.classList.add("score");
-      if (text === "Cumulative") span.classList.add("cumulative");
+      if (text === "Total") span.classList.add("cumulative");
       headerRow.appendChild(span);
     });
 

@@ -10,7 +10,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
-  margin: 0.25rem 0;
+  margin: 0.25rem 0 0;
   justify-content: flex-start;
   grid-column: 1 / -1;
 }
@@ -44,6 +44,10 @@
 
 .score-row {
   display: contents;
+}
+
+.score-row:not(.score-header) > * {
+  margin-top: 0.25rem;
 }
 
 .score-row > :first-child {
