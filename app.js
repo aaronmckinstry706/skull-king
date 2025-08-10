@@ -136,6 +136,8 @@ function renderAllRounds() {
     ["Player", "Bid", "Take", "Score", "Cumulative"].forEach(text => {
       const span = document.createElement("span");
       span.textContent = text;
+      if (text === "Bid") span.classList.add("bid");
+      if (text === "Take") span.classList.add("take");
       headerRow.appendChild(span);
     });
     
@@ -162,6 +164,7 @@ function renderAllRounds() {
     
       const bidInput = document.createElement("input");
       bidInput.type = "number";
+      bidInput.className = "bid-input";
       bidInput.value = playerData.bid;
       allowSpinnerOnly(bidInput);
       bidInput.oninput = () => {
@@ -172,6 +175,7 @@ function renderAllRounds() {
     
       const actualInput = document.createElement("input");
       actualInput.type = "number";
+      actualInput.className = "take-input";
       actualInput.value = playerData.actual;
       allowSpinnerOnly(actualInput);
       actualInput.oninput = () => {
