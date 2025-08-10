@@ -16,27 +16,6 @@
   cursor: pointer;
 }
 
-.more-bonuses {
-  position: relative;
-}
-
-.bonus-overlay {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 0.25rem 0.5rem;
-  gap: 0.5rem;
-  white-space: nowrap;
-  z-index: 10;
-}
-
-.bonus-overlay.open {
-  display: flex;
-}
 
 .bonus-counter .label {
   font-size: 1.25rem;

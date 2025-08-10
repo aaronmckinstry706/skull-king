@@ -186,14 +186,16 @@ function renderAllRounds() {
       
       // Bonus buttons config
       const bonuses = [
-        { key: "mermaid", label: "🧜", value: 20, max: 2 },
-        { key: "pirate", label: "⚔️", value: 30, max: 6 },
-        { key: "skullking", label: "☠️", value: 40, max: 1 },
-        { key: "nonTrump14", label: "14🔸", value: 10, max: 3 },
-        { key: "trump14", label: "14🏴‍☠️", value: 20, max: 1 },
+        { key: "mermaid", label: "🧜", max: 2 },
+        { key: "pirate", label: "⚔️", max: 6 },
+        { key: "skullking", label: "☠️", max: 1 },
+        { key: "nonTrump14", label: "14🔸", max: 3 },
+        { key: "trump14", label: "14🏴‍☠️", max: 1 },
+        { key: "bidModifier", label: "±", values: [-1, 0, 1] },
+        { key: "bet", label: "💰", values: [0, 10, 20] }
       ];
 
-      bonuses.forEach(({ key, label, max }) => {
+      bonuses.forEach(({ key, label, max, values }) => {
         const container = document.createElement("div");
         container.className = "bonus-counter";
         if (round.ignored) container.classList.add("disabled");
@@ -203,80 +205,28 @@ function renderAllRounds() {
         labelSpan.textContent = label;
 
         const count = document.createElement("span");
-        count.textContent = playerData.bonuses[key] || 0;
+        const current = playerData.bonuses[key] || 0;
+        if (key === "bidModifier") {
+          count.textContent = current === 0 ? "" : (current > 0 ? `+${current}` : current);
+        } else {
+          count.textContent = current === 0 ? "" : current;
+        }
 
-        const increment = () => {
+        container.onclick = () => {
           if (round.ignored) return;
-          const current = playerData.bonuses[key] || 0;
-          playerData.bonuses[key] = (current + 1) % (max + 1);
+          let curr = playerData.bonuses[key] || 0;
+          if (values) {
+            const idx = values.indexOf(curr);
+            playerData.bonuses[key] = values[(idx + 1) % values.length];
+          } else {
+            playerData.bonuses[key] = (curr + 1) % (max + 1);
+          }
           renderAllRounds();
         };
-
-        container.onclick = increment;
 
         container.append(labelSpan, count);
         bonusRow.appendChild(container);
       });
-      const moreContainer = document.createElement("div");
-      moreContainer.className = "bonus-counter more-bonuses";
-      if (round.ignored) moreContainer.classList.add("disabled");
-
-      const moreLabel = document.createElement("span");
-      moreLabel.className = "label";
-      moreLabel.textContent = "...";
-      moreContainer.appendChild(moreLabel);
-
-      const overlay = document.createElement("div");
-      overlay.className = "bonus-overlay";
-
-      const extras = [
-        { key: "bidModifier", label: "±", values: [-1, 0, 1] },
-        { key: "bet", label: "💰", values: [0, 10, 20] }
-      ];
-
-      extras.forEach(({ key, label, values }) => {
-        const exContainer = document.createElement("div");
-        exContainer.className = "bonus-counter";
-        if (round.ignored) exContainer.classList.add("disabled");
-
-        const l = document.createElement("span");
-        l.className = "label";
-        l.textContent = label;
-
-        const val = document.createElement("span");
-        val.textContent = playerData.bonuses[key] || 0;
-
-        exContainer.onclick = (e) => {
-          e.stopPropagation();
-          if (round.ignored) return;
-          const current = playerData.bonuses[key] || 0;
-          const idx = values.indexOf(current);
-          playerData.bonuses[key] = values[(idx + 1) % values.length];
-          renderAllRounds();
-        };
-
-        exContainer.append(l, val);
-        overlay.appendChild(exContainer);
-      });
-
-      moreContainer.appendChild(overlay);
-
-      moreContainer.onclick = (e) => {
-        e.stopPropagation();
-        if (round.ignored) return;
-        overlay.classList.toggle("open");
-        if (overlay.classList.contains("open")) {
-          const close = (ev) => {
-            if (!moreContainer.contains(ev.target)) {
-              overlay.classList.remove("open");
-              document.removeEventListener("click", close);
-            }
-          };
-          document.addEventListener("click", close);
-        }
-      };
-
-      bonusRow.appendChild(moreContainer);
 
       body.appendChild(bonusRow);
     });
