@@ -7,7 +7,8 @@ const gameState = {
 
 const uiState = {
   expandedRounds: new Set([-1]), // -1 for player editor
-  lootDropdown: null
+  lootDropdown: null,
+  lootDropdownButton: null,
 };
 
 function createPlayer() {
@@ -453,8 +454,15 @@ function addRound() {
 
 function showLootDropdown(button, roundIndex, playerIndex) {
   if (uiState.lootDropdown) {
+    if (uiState.lootDropdownButton === button) {
+      uiState.lootDropdown.remove();
+      uiState.lootDropdown = null;
+      uiState.lootDropdownButton = null;
+      return;
+    }
     uiState.lootDropdown.remove();
     uiState.lootDropdown = null;
+    uiState.lootDropdownButton = null;
   }
   const dropdown = document.createElement("div");
   dropdown.className = "loot-dropdown";
@@ -467,14 +475,16 @@ function showLootDropdown(button, roundIndex, playerIndex) {
       addLootPartnership(roundIndex, playerIndex, idx);
       dropdown.remove();
       uiState.lootDropdown = null;
+      uiState.lootDropdownButton = null;
     };
     dropdown.appendChild(option);
   });
   document.body.appendChild(dropdown);
   const rect = button.getBoundingClientRect();
-  dropdown.style.top = `${rect.bottom}px`;
-  dropdown.style.right = `${window.innerWidth - rect.right}px`;
+  dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+  dropdown.style.left = `${rect.left + window.scrollX}px`;
   uiState.lootDropdown = dropdown;
+  uiState.lootDropdownButton = button;
 }
 
 function addLootPartnership(roundIndex, p1, p2) {
@@ -505,6 +515,7 @@ document.addEventListener("click", (e) => {
   ) {
     uiState.lootDropdown.remove();
     uiState.lootDropdown = null;
+    uiState.lootDropdownButton = null;
   }
 });
 
