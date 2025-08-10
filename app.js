@@ -130,6 +130,9 @@ function renderAllRounds() {
     body.className = "accordion-body";
     if (!round.ignored && uiState.expandedRounds.has(roundIndex)) body.classList.add("open");
 
+    const grid = document.createElement("div");
+    grid.className = "score-grid";
+
     const headerRow = document.createElement("div");
     headerRow.className = "score-row score-header";
 
@@ -138,11 +141,14 @@ function renderAllRounds() {
       span.textContent = text;
       if (text === "Bid") span.classList.add("bid");
       if (text === "Take") span.classList.add("take");
+      if (text === "Score") span.classList.add("score");
+      if (text === "Cumulative") span.classList.add("cumulative");
       headerRow.appendChild(span);
     });
-    
-    body.appendChild(headerRow);
-    
+
+    grid.appendChild(headerRow);
+    body.appendChild(grid);
+
     round.players.forEach((playerData, playerIndex) => {
       // Ensure bonuses object exists with default values for each player
       playerData.bonuses = {
@@ -193,7 +199,7 @@ function renderAllRounds() {
       cumulativeSpan.textContent = cumulative;
     
       row.append(name, bidInput, actualInput, scoreSpan, cumulativeSpan);
-      body.appendChild(row);
+      grid.appendChild(row);
 
       const bonusRow = document.createElement("div");
       bonusRow.className = "bonus-row";
@@ -251,7 +257,7 @@ function renderAllRounds() {
         bonusRow.appendChild(container);
       });
 
-      body.appendChild(bonusRow);
+      grid.appendChild(bonusRow);
     });
 
     // Navigation buttons to jump between non-ignored rounds
