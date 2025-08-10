@@ -334,7 +334,7 @@ function renderAllRounds() {
       });
 
       const lootRow = document.createElement("div");
-      lootRow.className = "bonus-row";
+      lootRow.className = "bonus-row loot-row";
       (playerData.bonuses.loot || []).forEach(partnerIndex => {
         const container = document.createElement("div");
         container.className = "bonus-counter";
