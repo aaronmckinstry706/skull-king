@@ -520,9 +520,15 @@ function computeScore(player, roundIndex) {
   else
     base = made ? 20 * bid : -10 * Math.abs(actual - modifiedBid);
   let loot = 0;
-  (bonuses?.loot || []).forEach(partnerIndex => {
-    const partner = gameState.rounds[roundIndex].players[partnerIndex];
-    if (!partner) return; // skip if partner no longer exists
+  // Filter out any loot partnerships that reference players that no longer exist
+  const roundPlayers = gameState.rounds[roundIndex]?.players || [];
+  const validLootPartners = (bonuses?.loot || []).filter(
+    idx => roundPlayers[idx]
+  );
+  // Persist the cleaned list back to the player to avoid repeated checks
+  if (bonuses && bonuses.loot) bonuses.loot = validLootPartners;
+  validLootPartners.forEach(partnerIndex => {
+    const partner = roundPlayers[partnerIndex];
     const partnerMod = partner.bid + (partner.bonuses?.bidModifier ?? 0);
     const partnerMade = partner.actual === partnerMod;
     if (made && partnerMade) loot += 20;
