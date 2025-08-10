@@ -25,6 +25,14 @@ function createPlayer() {
   };
 }
 
+function allowSpinnerOnly(input) {
+  input.addEventListener("keydown", e => {
+    if (["ArrowUp", "ArrowDown", "Tab"].includes(e.key)) return;
+    e.preventDefault();
+  });
+  input.addEventListener("paste", e => e.preventDefault());
+}
+
 function renderPlayerEditor() {
   const container = document.getElementById("player-list");
   container.innerHTML = "";
@@ -155,7 +163,7 @@ function renderAllRounds() {
       const bidInput = document.createElement("input");
       bidInput.type = "number";
       bidInput.value = playerData.bid;
-      bidInput.readOnly = true;
+      allowSpinnerOnly(bidInput);
       bidInput.oninput = () => {
         playerData.bid = parseInt(bidInput.value || "0");
         renderAllRounds(); // to recalc scores
@@ -165,7 +173,7 @@ function renderAllRounds() {
       const actualInput = document.createElement("input");
       actualInput.type = "number";
       actualInput.value = playerData.actual;
-      actualInput.readOnly = true;
+      allowSpinnerOnly(actualInput);
       actualInput.oninput = () => {
         playerData.actual = parseInt(actualInput.value || "0");
         renderAllRounds();
