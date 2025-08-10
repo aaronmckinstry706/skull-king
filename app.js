@@ -25,12 +25,55 @@ function createPlayer() {
   };
 }
 
-function allowSpinnerOnly(input) {
+function createSpinnerInput(initialValue, onChange, className, disabled) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "spinner-input";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = className;
+  input.value = initialValue;
+  input.disabled = disabled;
+
+  const controls = document.createElement("div");
+  controls.className = "spinner-controls";
+
+  const up = document.createElement("button");
+  up.textContent = "▲";
+  up.disabled = disabled;
+  up.onclick = () => {
+    const current = parseInt(input.value || "0", 10);
+    const val = current + 1;
+    input.value = val;
+    onChange(val);
+  };
+
+  const down = document.createElement("button");
+  down.textContent = "▼";
+  down.disabled = disabled;
+  down.onclick = () => {
+    const current = parseInt(input.value || "0", 10);
+    const val = current - 1;
+    input.value = val;
+    onChange(val);
+  };
+
+  controls.append(up, down);
+  wrapper.append(input, controls);
+
   input.addEventListener("keydown", e => {
-    if (["ArrowUp", "ArrowDown", "Tab"].includes(e.key)) return;
-    e.preventDefault();
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      up.onclick();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      down.onclick();
+    } else if (e.key !== "Tab") {
+      e.preventDefault();
+    }
   });
-  input.addEventListener("paste", e => e.preventDefault());
+
+  return wrapper;
 }
 
 function renderPlayerEditor() {
@@ -168,27 +211,25 @@ function renderAllRounds() {
       const name = document.createElement("span");
       name.textContent = gameState.players[playerIndex];
     
-      const bidInput = document.createElement("input");
-      bidInput.type = "number";
-      bidInput.className = "bid-input";
-      bidInput.value = playerData.bid;
-      allowSpinnerOnly(bidInput);
-      bidInput.oninput = () => {
-        playerData.bid = parseInt(bidInput.value || "0");
-        renderAllRounds(); // to recalc scores
-      };
-      bidInput.disabled = round.ignored;
-    
-      const actualInput = document.createElement("input");
-      actualInput.type = "number";
-      actualInput.className = "take-input";
-      actualInput.value = playerData.actual;
-      allowSpinnerOnly(actualInput);
-      actualInput.oninput = () => {
-        playerData.actual = parseInt(actualInput.value || "0");
-        renderAllRounds();
-      };
-      actualInput.disabled = round.ignored;
+      const bidInput = createSpinnerInput(
+        playerData.bid,
+        val => {
+          playerData.bid = val;
+          renderAllRounds(); // to recalc scores
+        },
+        "bid-input",
+        round.ignored
+      );
+
+      const actualInput = createSpinnerInput(
+        playerData.actual,
+        val => {
+          playerData.actual = val;
+          renderAllRounds();
+        },
+        "take-input",
+        round.ignored
+      );
     
       const scoreSpan = document.createElement("span");
       const score = computeScore(playerData, roundIndex);
