@@ -39,11 +39,20 @@ function createSpinnerInput(initialValue, onChange, className, disabled) {
   const minus = document.createElement("button");
   minus.textContent = "−";
   minus.disabled = disabled;
+
+  const updateDisabled = () => {
+    if (!disabled) {
+      minus.disabled = parseInt(value.textContent || "0", 10) <= 0;
+    }
+  };
+
   minus.onclick = () => {
     const current = parseInt(value.textContent || "0", 10);
+    if (current <= 0) return;
     const val = current - 1;
     value.textContent = val;
     onChange(val);
+    updateDisabled();
   };
 
   const plus = document.createElement("button");
@@ -54,10 +63,13 @@ function createSpinnerInput(initialValue, onChange, className, disabled) {
     const val = current + 1;
     value.textContent = val;
     onChange(val);
+    updateDisabled();
   };
 
   controls.append(minus, plus);
   wrapper.append(value, controls);
+
+  updateDisabled();
 
   return wrapper;
 }
