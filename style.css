@@ -48,6 +48,14 @@
   box-sizing: border-box;
 }
 
+.score-row .bid-input,
+.score-row .take-input {
+  width: 3rem;
+  text-align: left;
+  outline: none;
+  justify-self: start;
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   opacity: 1;
@@ -66,6 +74,11 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .score-header span:not(:first-child) {
   text-align: center;
+}
+
+.score-header span.bid,
+.score-header span.take {
+  text-align: left;
 }
 
 .round-nav {
