@@ -36,27 +36,27 @@ function createSpinnerInput(initialValue, onChange, className, disabled) {
   const controls = document.createElement("div");
   controls.className = "spinner-controls";
 
-  const up = document.createElement("button");
-  up.textContent = "▲";
-  up.disabled = disabled;
-  up.onclick = () => {
-    const current = parseInt(value.textContent || "0", 10);
-    const val = current + 1;
-    value.textContent = val;
-    onChange(val);
-  };
-
-  const down = document.createElement("button");
-  down.textContent = "▼";
-  down.disabled = disabled;
-  down.onclick = () => {
+  const minus = document.createElement("button");
+  minus.textContent = "−";
+  minus.disabled = disabled;
+  minus.onclick = () => {
     const current = parseInt(value.textContent || "0", 10);
     const val = current - 1;
     value.textContent = val;
     onChange(val);
   };
 
-  controls.append(up, down);
+  const plus = document.createElement("button");
+  plus.textContent = "+";
+  plus.disabled = disabled;
+  plus.onclick = () => {
+    const current = parseInt(value.textContent || "0", 10);
+    const val = current + 1;
+    value.textContent = val;
+    onChange(val);
+  };
+
+  controls.append(minus, plus);
   wrapper.append(value, controls);
 
   return wrapper;
