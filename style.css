@@ -3,8 +3,7 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
   align-items: center;
-  gap: 0.25rem 0.5rem;
-  padding-left: 0.25rem;
+  gap: 0;
 }
 
 .bonus-row {
@@ -47,8 +46,12 @@
   display: contents;
 }
 
-.score-row input {
-  width: 100%;
+.score-row > :first-child {
+  padding-left: 12px;
+}
+
+.spinner-value {
+  flex: 1;
   text-align: center;
   box-sizing: border-box;
 }
@@ -56,8 +59,6 @@
 .score-row .bid-input,
 .score-row .take-input {
   text-align: left;
-  outline: none;
-  justify-self: start;
 }
 
 /* Custom spinner wrapper and controls */

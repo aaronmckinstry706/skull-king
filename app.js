@@ -29,11 +29,9 @@ function createSpinnerInput(initialValue, onChange, className, disabled) {
   const wrapper = document.createElement("div");
   wrapper.className = "spinner-input";
 
-  const input = document.createElement("input");
-  input.type = "text";
-  input.className = className;
-  input.value = initialValue;
-  input.disabled = disabled;
+  const value = document.createElement("span");
+  value.className = `${className} spinner-value`;
+  value.textContent = initialValue;
 
   const controls = document.createElement("div");
   controls.className = "spinner-controls";
@@ -42,9 +40,9 @@ function createSpinnerInput(initialValue, onChange, className, disabled) {
   up.textContent = "▲";
   up.disabled = disabled;
   up.onclick = () => {
-    const current = parseInt(input.value || "0", 10);
+    const current = parseInt(value.textContent || "0", 10);
     const val = current + 1;
-    input.value = val;
+    value.textContent = val;
     onChange(val);
   };
 
@@ -52,26 +50,14 @@ function createSpinnerInput(initialValue, onChange, className, disabled) {
   down.textContent = "▼";
   down.disabled = disabled;
   down.onclick = () => {
-    const current = parseInt(input.value || "0", 10);
+    const current = parseInt(value.textContent || "0", 10);
     const val = current - 1;
-    input.value = val;
+    value.textContent = val;
     onChange(val);
   };
 
   controls.append(up, down);
-  wrapper.append(input, controls);
-
-  input.addEventListener("keydown", e => {
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      up.onclick();
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      down.onclick();
-    } else if (e.key !== "Tab") {
-      e.preventDefault();
-    }
-  });
+  wrapper.append(value, controls);
 
   return wrapper;
 }
