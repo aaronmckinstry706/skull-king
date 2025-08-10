@@ -15,6 +15,10 @@
   grid-column: 1 / -1;
 }
 
+.bonus-row.loot-row {
+  justify-content: flex-start;
+}
+
 .bonus-counter {
   display: flex;
   align-items: center;
