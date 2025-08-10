@@ -11,7 +11,7 @@
   flex-wrap: wrap;
   gap: 0.25rem;
   margin: 0.25rem 0 0;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   grid-column: 1 / -1;
 }
 
@@ -40,6 +40,24 @@
 .bonus-counter.disabled {
   pointer-events: none;
   opacity: 0.5;
+}
+
+.loot-dropdown {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.loot-dropdown div {
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.loot-dropdown div:hover {
+  background: #eee;
 }
 
 .score-row {
