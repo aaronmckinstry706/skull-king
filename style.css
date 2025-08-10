@@ -1,21 +1,28 @@
 .bonus-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0.5rem 0 1rem;
+  gap: 0.25rem;
+  margin: 0.25rem 0;
   justify-content: flex-start;
 }
 
 .bonus-counter {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.15rem;
   background: #f0f0f0;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
   cursor: pointer;
 }
 
+.bonus-counter.bonus-active {
+  background: #d6ecff;
+}
+
+.bonus-counter.bonus-ignored {
+  background: #ffe5e5;
+}
 
 .bonus-counter .label {
   font-size: 1.25rem;
@@ -41,11 +48,24 @@
   box-sizing: border-box;
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
 .score-header {
   font-weight: bold;
   background: #f0f0f0;
   padding: 0.25rem;
   border-radius: 4px;
+}
+
+.score-header span {
+  width: 100%;
+}
+
+.score-header span:not(:first-child) {
+  text-align: center;
 }
 
 .round-nav {

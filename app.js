@@ -124,8 +124,8 @@ function renderAllRounds() {
 
     const headerRow = document.createElement("div");
     headerRow.className = "score-row score-header";
-    
-    ["Player", "Bid", "Actual", "Score", "Cumulative"].forEach(text => {
+
+    ["Player", "Bid", "Take", "Score", "Cumulative"].forEach(text => {
       const span = document.createElement("span");
       span.textContent = text;
       headerRow.appendChild(span);
@@ -155,6 +155,7 @@ function renderAllRounds() {
       const bidInput = document.createElement("input");
       bidInput.type = "number";
       bidInput.value = playerData.bid;
+      bidInput.readOnly = true;
       bidInput.oninput = () => {
         playerData.bid = parseInt(bidInput.value || "0");
         renderAllRounds(); // to recalc scores
@@ -164,6 +165,7 @@ function renderAllRounds() {
       const actualInput = document.createElement("input");
       actualInput.type = "number";
       actualInput.value = playerData.actual;
+      actualInput.readOnly = true;
       actualInput.oninput = () => {
         playerData.actual = parseInt(actualInput.value || "0");
         renderAllRounds();
@@ -183,7 +185,7 @@ function renderAllRounds() {
 
       const bonusRow = document.createElement("div");
       bonusRow.className = "bonus-row";
-      
+
       // Bonus buttons config
       const bonuses = [
         { key: "mermaid", label: "🧜", max: 2 },
@@ -194,6 +196,9 @@ function renderAllRounds() {
         { key: "bidModifier", label: "±", values: [-1, 0, 1] },
         { key: "bet", label: "💰", values: [0, 10, 20] }
       ];
+
+      const modifiedBid = playerData.bid + (playerData.bonuses.bidModifier || 0);
+      const madeBid = playerData.actual === modifiedBid;
 
       bonuses.forEach(({ key, label, max, values }) => {
         const container = document.createElement("div");
@@ -210,6 +215,12 @@ function renderAllRounds() {
           count.textContent = current === 0 ? "" : (current > 0 ? `+${current}` : current);
         } else {
           count.textContent = current === 0 ? "" : current;
+        }
+
+        if (current !== 0) {
+          const affectsScore =
+            key === "bidModifier" || key === "bet" ? true : madeBid;
+          container.classList.add(affectsScore ? "bonus-active" : "bonus-ignored");
         }
 
         container.onclick = () => {
