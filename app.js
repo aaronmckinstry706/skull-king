@@ -18,7 +18,9 @@ function createPlayer() {
       pirate: 0,
       skullking: 0,
       nonTrump14: 0,
-      trump14: 0
+      trump14: 0,
+      bidModifier: 0,
+      bet: 0
     }
   };
 }
@@ -139,6 +141,8 @@ function renderAllRounds() {
         skullking: 0,
         nonTrump14: 0,
         trump14: 0,
+        bidModifier: 0,
+        bet: 0,
         ...playerData.bonuses
       };
 
@@ -213,6 +217,66 @@ function renderAllRounds() {
         container.append(labelSpan, count);
         bonusRow.appendChild(container);
       });
+      const moreContainer = document.createElement("div");
+      moreContainer.className = "bonus-counter more-bonuses";
+      if (round.ignored) moreContainer.classList.add("disabled");
+
+      const moreLabel = document.createElement("span");
+      moreLabel.className = "label";
+      moreLabel.textContent = "...";
+      moreContainer.appendChild(moreLabel);
+
+      const overlay = document.createElement("div");
+      overlay.className = "bonus-overlay";
+
+      const extras = [
+        { key: "bidModifier", label: "±", values: [-1, 0, 1] },
+        { key: "bet", label: "💰", values: [0, 10, 20] }
+      ];
+
+      extras.forEach(({ key, label, values }) => {
+        const exContainer = document.createElement("div");
+        exContainer.className = "bonus-counter";
+        if (round.ignored) exContainer.classList.add("disabled");
+
+        const l = document.createElement("span");
+        l.className = "label";
+        l.textContent = label;
+
+        const val = document.createElement("span");
+        val.textContent = playerData.bonuses[key] || 0;
+
+        exContainer.onclick = (e) => {
+          e.stopPropagation();
+          if (round.ignored) return;
+          const current = playerData.bonuses[key] || 0;
+          const idx = values.indexOf(current);
+          playerData.bonuses[key] = values[(idx + 1) % values.length];
+          renderAllRounds();
+        };
+
+        exContainer.append(l, val);
+        overlay.appendChild(exContainer);
+      });
+
+      moreContainer.appendChild(overlay);
+
+      moreContainer.onclick = (e) => {
+        e.stopPropagation();
+        if (round.ignored) return;
+        overlay.classList.toggle("open");
+        if (overlay.classList.contains("open")) {
+          const close = (ev) => {
+            if (!moreContainer.contains(ev.target)) {
+              overlay.classList.remove("open");
+              document.removeEventListener("click", close);
+            }
+          };
+          document.addEventListener("click", close);
+        }
+      };
+
+      bonusRow.appendChild(moreContainer);
 
       body.appendChild(bonusRow);
     });
@@ -313,19 +377,23 @@ function addRound() {
 
 function computeScore(player, roundIndex) {
   const { bid, actual, bonuses } = player;
+  const bidMod = bonuses?.bidModifier ?? 0;
+  const bet = bonuses?.bet ?? 0;
+  const modifiedBid = bid + bidMod;
+  const made = actual === modifiedBid;
   let base = 0;
   if (bid === 0)
-    base = (bid === actual ? 1 : -1)*(roundIndex + 1)*10;
+    base = (made ? 1 : -1) * (roundIndex + 1) * 10;
   else
-    base = bid === actual ? 20 * bid : -10 * Math.abs(bid - actual);
-  let bonus = 0;
-  if (bid === actual)
-    bonus =
-      (bonuses?.mermaid ?? 0) * 20 +
+    base = made ? 20 * bid : -10 * Math.abs(actual - modifiedBid);
+  const bonus = made
+    ? (bonuses?.mermaid ?? 0) * 20 +
       (bonuses?.pirate ?? 0) * 30 +
       (bonuses?.skullking ?? 0) * 40 +
       (bonuses?.nonTrump14 ?? 0) * 10 +
-      (bonuses?.trump14 ?? 0) * 20;
+      (bonuses?.trump14 ?? 0) * 20 +
+      bet
+    : -bet;
   return base + bonus;
 }
 
