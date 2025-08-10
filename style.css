@@ -51,8 +51,7 @@
 }
 
 .spinner-value {
-  flex: 1;
-  text-align: center;
+  text-align: left;
   box-sizing: border-box;
 }
 
