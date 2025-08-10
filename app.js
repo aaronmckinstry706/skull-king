@@ -6,7 +6,8 @@ const gameState = {
 };
 
 const uiState = {
-  expandedRounds: new Set([-1]) // -1 for player editor
+  expandedRounds: new Set([-1]), // -1 for player editor
+  lootDropdown: null
 };
 
 function createPlayer() {
@@ -20,7 +21,8 @@ function createPlayer() {
       nonTrump14: 0,
       trump14: 0,
       bidModifier: 0,
-      bet: 0
+      bet: 0,
+      loot: []
     }
   };
 }
@@ -200,8 +202,10 @@ function renderAllRounds() {
         trump14: 0,
         bidModifier: 0,
         bet: 0,
+        loot: [],
         ...playerData.bonuses
       };
+      playerData.bonuses.loot = playerData.bonuses.loot || [];
 
       const row = document.createElement("div");
       row.className = "score-row";
@@ -251,13 +255,31 @@ function renderAllRounds() {
         { key: "nonTrump14", label: "14🔸", max: 3 },
         { key: "trump14", label: "14🏴‍☠️", max: 1 },
         { key: "bidModifier", label: "±", values: [-1, 0, 1] },
-        { key: "bet", label: "💰", values: [0, 10, 20] }
+        { key: "bet", label: "💰", values: [0, 10, 20] },
+        { key: "loot", label: "\uD83D\uDDC3\uFE0F" }
       ];
 
       const modifiedBid = playerData.bid + (playerData.bonuses.bidModifier || 0);
       const madeBid = playerData.actual === modifiedBid;
 
       bonuses.forEach(({ key, label, max, values }) => {
+        if (key === "loot") {
+          const container = document.createElement("div");
+          container.className = "bonus-counter loot-base";
+          if (round.ignored) container.classList.add("disabled");
+          const labelSpan = document.createElement("span");
+          labelSpan.className = "label";
+          labelSpan.textContent = label;
+          container.appendChild(labelSpan);
+          container.onclick = (e) => {
+            e.stopPropagation();
+            if (round.ignored) return;
+            showLootDropdown(container, roundIndex, playerIndex);
+          };
+          bonusRow.appendChild(container);
+          return;
+        }
+
         const container = document.createElement("div");
         container.className = "bonus-counter";
         if (round.ignored) container.classList.add("disabled");
@@ -296,7 +318,29 @@ function renderAllRounds() {
         bonusRow.appendChild(container);
       });
 
+      const lootRow = document.createElement("div");
+      lootRow.className = "bonus-row";
+      (playerData.bonuses.loot || []).forEach(partnerIndex => {
+        const container = document.createElement("div");
+        container.className = "bonus-counter";
+        if (round.ignored) container.classList.add("disabled");
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "label";
+        labelSpan.textContent = "\uD83D\uDDC3\uFE0F";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = gameState.players[partnerIndex];
+        container.append(labelSpan, nameSpan);
+        container.onclick = () => {
+          if (round.ignored) return;
+          removeLootPartnership(roundIndex, playerIndex, partnerIndex);
+        };
+        lootRow.appendChild(container);
+      });
+
       grid.appendChild(bonusRow);
+      if (lootRow.children.length > 0) {
+        grid.appendChild(lootRow);
+      }
     });
 
     // Navigation buttons to jump between non-ignored rounds
@@ -393,6 +437,60 @@ function addRound() {
   });
 }
 
+function showLootDropdown(button, roundIndex, playerIndex) {
+  if (uiState.lootDropdown) {
+    uiState.lootDropdown.remove();
+    uiState.lootDropdown = null;
+  }
+  const dropdown = document.createElement("div");
+  dropdown.className = "loot-dropdown";
+  const round = gameState.rounds[roundIndex];
+  const currentLoot = round.players[playerIndex].bonuses.loot || [];
+  gameState.players.forEach((name, idx) => {
+    if (idx === playerIndex || currentLoot.includes(idx)) return;
+    const option = document.createElement("div");
+    option.textContent = name;
+    option.onclick = () => {
+      addLootPartnership(roundIndex, playerIndex, idx);
+      dropdown.remove();
+      uiState.lootDropdown = null;
+    };
+    dropdown.appendChild(option);
+  });
+  document.body.appendChild(dropdown);
+  const rect = button.getBoundingClientRect();
+  dropdown.style.top = `${rect.bottom}px`;
+  dropdown.style.right = `${window.innerWidth - rect.right}px`;
+  uiState.lootDropdown = dropdown;
+}
+
+function addLootPartnership(roundIndex, p1, p2) {
+  const round = gameState.rounds[roundIndex];
+  const list1 = round.players[p1].bonuses.loot || (round.players[p1].bonuses.loot = []);
+  const list2 = round.players[p2].bonuses.loot || (round.players[p2].bonuses.loot = []);
+  if (!list1.includes(p2)) list1.push(p2);
+  if (!list2.includes(p1)) list2.push(p1);
+  renderAllRounds();
+}
+
+function removeLootPartnership(roundIndex, p1, p2) {
+  const round = gameState.rounds[roundIndex];
+  round.players[p1].bonuses.loot = (round.players[p1].bonuses.loot || []).filter(i => i !== p2);
+  round.players[p2].bonuses.loot = (round.players[p2].bonuses.loot || []).filter(i => i !== p1);
+  renderAllRounds();
+}
+
+document.addEventListener("click", (e) => {
+  if (
+    uiState.lootDropdown &&
+    !e.target.closest(".loot-dropdown") &&
+    !e.target.closest(".loot-base")
+  ) {
+    uiState.lootDropdown.remove();
+    uiState.lootDropdown = null;
+  }
+});
+
 function computeScore(player, roundIndex) {
   const { bid, actual, bonuses } = player;
   const bidMod = bonuses?.bidModifier ?? 0;
@@ -404,13 +502,21 @@ function computeScore(player, roundIndex) {
     base = (made ? 1 : -1) * (roundIndex + 1) * 10;
   else
     base = made ? 20 * bid : -10 * Math.abs(actual - modifiedBid);
+  let loot = 0;
+  (bonuses?.loot || []).forEach(partnerIndex => {
+    const partner = gameState.rounds[roundIndex].players[partnerIndex];
+    const partnerMod = partner.bid + (partner.bonuses?.bidModifier ?? 0);
+    const partnerMade = partner.actual === partnerMod;
+    if (made && partnerMade) loot += 20;
+  });
   const bonus = made
     ? (bonuses?.mermaid ?? 0) * 20 +
       (bonuses?.pirate ?? 0) * 30 +
       (bonuses?.skullking ?? 0) * 40 +
       (bonuses?.nonTrump14 ?? 0) * 10 +
       (bonuses?.trump14 ?? 0) * 20 +
-      bet
+      bet +
+      loot
     : -bet;
   return base + bonus;
 }
