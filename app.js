@@ -526,10 +526,10 @@ function computeScore(player, roundIndex) {
   const modifiedBid = bid + bidMod;
   const made = actual === modifiedBid;
   let base = 0;
-  if (bid === 0)
+  if (modifiedBid === 0)
     base = (made ? 1 : -1) * (roundIndex + 1) * 10;
   else
-    base = made ? 20 * bid : -10 * Math.abs(actual - modifiedBid);
+    base = made ? 20 * modifiedBid : -10 * Math.abs(actual - modifiedBid);
   let loot = 0;
   // Filter out any loot partnerships that reference players that no longer exist
   const roundPlayers = gameState.rounds[roundIndex]?.players || [];
